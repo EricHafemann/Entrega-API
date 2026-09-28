@@ -1,8 +1,7 @@
 package br.com.ctw.apientregas.config;
 
-import br.com.ctw.apientregas.config.service.JwtService;
 import br.com.ctw.apientregas.exception.ErroResponse;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.json.JsonMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -59,8 +58,8 @@ public class SecurityConfig {
                                 "/v3/api-docs.yaml"
                         ).permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/motoristas").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE,"/api/motoristas").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/motoristas/**").hasRole("USER")
+                        .requestMatchers("/api/motoristas/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

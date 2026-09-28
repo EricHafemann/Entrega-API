@@ -11,12 +11,12 @@ import jakarta.validation.constraints.Size;
  */
 public record CreateUsuarioDto(
 
-        @NotBlank
+        @NotBlank(message = "Username é obrigatório.")
         @Size(min = 3, max = 100, message = "Username precisa conter entre 3 caracteres a 100 caracteres.")
         @Schema(description = "Nome do Usuário (Unico)", example = "Gustavo Nogath")
         String username,
 
-        @NotBlank
+        @NotBlank(message = "Senha é obrigatório.")
         @Size(min = 5, message = "Senha precisa conter pelo menos 5 caracteres.")
         @Schema(description = "Senha do Usuário     ", example = "123@Mudar")
         String password
