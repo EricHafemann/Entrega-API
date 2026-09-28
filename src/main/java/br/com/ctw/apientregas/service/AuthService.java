@@ -1,52 +1,63 @@
 package br.com.ctw.apientregas.service;
 
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
+import br.com.ctw.apientregas.config.service.JwtService;
+import br.com.ctw.apientregas.dto.request.CreateUsuarioDto;
+import br.com.ctw.apientregas.dto.request.LoginUsuarioDto;
+import br.com.ctw.apientregas.dto.response.ResponseLoginDto;
+import br.com.ctw.apientregas.dto.response.ResponseUsuarioDto;
+import br.com.ctw.apientregas.entities.enumerated.Role;
+import br.com.ctw.apientregas.entities.UsuarioEntity;
+import br.com.ctw.apientregas.exception.UserAlreadyExistsException;
+import br.com.ctw.apientregas.repository.JpaUsuarioRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import javax.crypto.SecretKey;
-import java.util.Date;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class JwtService {
+@RequiredArgsConstructor
+public class AuthService {
 
-    @Value("${jwt.secret}")
-    private String secret;
+    private final JpaUsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
-    @Value("${jwt.expiration}")
-    private Long expiration;
-
-    public String generateToken(UserDetails userDetails) {
-        return Jwts.builder()
-                .subject(userDetails.getUsername())
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getKey())
-                .compact();
-    }
-
-    public String extractUsername(String token) {
-        return Jwts.parser()
-                .verifyWith(getKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
-    }
-
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        try {
-            return extractUsername(token).equals(userDetails.getUsername());
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
+    @Transactional
+    public ResponseUsuarioDto register (CreateUsuarioDto dto)
+    {
+        if(usuarioRepository.existsByUsername(dto.username()))
+        {
+            throw new UserAlreadyExistsException("Usuário com esse username já existente !");
         }
+
+        UsuarioEntity usuario = UsuarioEntity.builder()
+                .username(dto.username())
+                .password(passwordEncoder.encode(dto.password()))
+                .role(Role.ROLE_USER)
+                .build();
+
+        usuarioRepository.save(usuario);
+
+        return new ResponseUsuarioDto(
+                "Seja Bem Vindo, "+ dto.username()   + " !"
+        );
     }
 
-    private SecretKey getKey() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+    public ResponseLoginDto login(LoginUsuarioDto dto) {
+
+        authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(dto.username(), dto.password())
+        );
+
+        UsuarioEntity usuario = usuarioRepository.findByUsername(dto.username())
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado !"));
+
+        String token = jwtService.generateToken(usuario);
+
+        return new ResponseLoginDto(token);
     }
 }
