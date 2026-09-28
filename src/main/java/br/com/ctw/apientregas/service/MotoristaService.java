@@ -49,10 +49,18 @@ public class MotoristaService
         return motoristaMapper.toResponse(motorista);
     }
 
+    public List<ResponseMotoristaDto> findByNome(String nome)
+    {
+        List<MotoristaEntity> motoristas = motoristaRepository.findByNome(nome);
+
+        return motoristaMapper.toListResponse(motoristas);
+    }
+
     public List<ResponseMotoristaDto> findAll ()
     {
         return motoristaMapper.toListResponse(motoristaRepository.findAll());
     }
+
 
     public void delete (BigInteger id)
     {

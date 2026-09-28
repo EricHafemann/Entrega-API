@@ -13,5 +13,5 @@ public interface JpaMotoristaRepository extends JpaRepository<MotoristaEntity, B
     boolean existsByCnh (String cnh);
 
     @Query("SELECT m FROM MotoristaEntity m WHERE m.nome LIKE %:nome%")
-    List<MotoristaEntity> buscarPorNome(@Param("nome") String nome);
+    List<MotoristaEntity> findByNome(@Param("nome") String nome);
 }

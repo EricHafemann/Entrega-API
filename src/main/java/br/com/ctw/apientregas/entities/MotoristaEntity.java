@@ -26,6 +26,7 @@ public class MotoristaEntity {
     @Column(nullable = false, unique = true, length = 9)
     private String cnh;
 
+    @Builder.Default
     @OneToMany(mappedBy = "motorista")
     private Set<EntregaEntity> entregas = new HashSet<>();
 }

@@ -90,6 +90,19 @@ public class MotoristaController {
     }
 
     @Operation(
+            summary = "Busca Motoristas pelo nome",
+            description = "Retorna todos os motoristas salvos no sistema com o nome escolhido."
+    )
+    @ApiResponse(
+            description = "Motoristas retornados com sucesso",
+            responseCode = "200"
+    )
+    @GetMapping
+    public ResponseEntity<List<ResponseMotoristaDto>> findAll(@RequestParam(required = false) String nome) {
+        return ResponseEntity.ok(motoristaService.findByNome(nome));
+    }
+
+    @Operation(
             summary = "Deleta um  Motorista",
             description = "Recebe um ID e remove o motorista que o possui."
     )
