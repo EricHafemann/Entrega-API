@@ -98,7 +98,7 @@ public class MotoristaController {
             responseCode = "200"
     )
     @GetMapping("/busca/{nome}")
-    public ResponseEntity<List<ResponseMotoristaDto>> findAll(@PathVariable String nome) {
+    public ResponseEntity<List<ResponseMotoristaDto>> findByName(@PathVariable String nome) {
         return ResponseEntity.ok(motoristaService.findByNome(nome));
     }
 
