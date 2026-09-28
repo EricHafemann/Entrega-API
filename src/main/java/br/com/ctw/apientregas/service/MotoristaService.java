@@ -7,14 +7,11 @@ import br.com.ctw.apientregas.exception.MotoristaAlreadyExistsException;
 import br.com.ctw.apientregas.exception.NotFoundException;
 import br.com.ctw.apientregas.mapper.MotoristaMapper;
 import br.com.ctw.apientregas.repository.JpaMotoristaRepository;
-import br.com.ctw.apientregas.repository.JpaUsuarioRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor

@@ -97,8 +97,8 @@ public class MotoristaController {
             description = "Motoristas retornados com sucesso",
             responseCode = "200"
     )
-    @GetMapping
-    public ResponseEntity<List<ResponseMotoristaDto>> findAll(@RequestParam(required = false) String nome) {
+    @GetMapping("/busca/{nome}")
+    public ResponseEntity<List<ResponseMotoristaDto>> findAll(@PathVariable String nome) {
         return ResponseEntity.ok(motoristaService.findByNome(nome));
     }
 
