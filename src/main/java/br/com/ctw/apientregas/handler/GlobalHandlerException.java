@@ -5,6 +5,7 @@ import br.com.ctw.apientregas.exception.UserAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -69,6 +70,17 @@ public class GlobalHandlerException {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(erroResponse);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErroResponse> handlerBadCredentials(BadCredentialsException ex, HttpServletRequest request) {
+        ErroResponse erro = ErroResponse.builder()
+                .mensagem("Usuário ou senha inválidos !")
+                .code(HttpStatus.UNAUTHORIZED.value())
+                .path(request.getRequestURI())
+                .dateTime(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erro);
     }
 
     
